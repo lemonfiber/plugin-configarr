@@ -1,0 +1,18 @@
+# The adapter's image: built from this repository, distroless, non-root, with no
+# shell and no package manager. Its health check is the binary asking itself.
+
+FROM rust:1.99.1-alpine3.22@sha256:9a744dc47d1ac2a7d17fc3cedfc8b4928b1696dfcba3274ab25bfb40988a9ff0 AS build
+RUN apk add --no-cache musl-dev
+WORKDIR /src
+COPY Cargo.toml Cargo.lock build.rs plugin.toml ./
+COPY src ./src
+COPY config/configarr ./config/configarr
+RUN cargo build --release --locked --bin configarr-adapter \
+    && cp target/release/configarr-adapter /configarr-adapter
+
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+COPY --from=build /configarr-adapter /configarr-adapter
+USER nonroot:nonroot
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD ["/configarr-adapter", "health"]
+ENTRYPOINT ["/configarr-adapter"]

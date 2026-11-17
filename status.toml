@@ -1,0 +1,14 @@
+# What this repository implements, one row per requirement (OPS-R74).
+#
+# `done` means the requirement is met in full by what is here, `partial` that this
+# repository holds its part and the rest lives elsewhere, `open` that nothing here
+# meets it yet. The release gate and the no-stubs gate read this file; a pull
+# request that changes whether a requirement is met changes its row.
+
+requirement = [
+  { id = "ARCH-R431", state = "partial", evidence = ["plugin.toml", "tests/manifest.rs::the_pinned_core_refuses_nothing_in_the_manifest"] },
+  { id = "F14-R13", state = "partial", evidence = ["src/adapter.rs", "tests/manifest.rs::the_adapter_names_the_image_of_the_configarr_it_fronts"] },
+  { id = "F14-R15", state = "partial", evidence = ["Cargo.toml", "Dockerfile", ".github/workflows/release.yml"] },
+  { id = "F14-R27", state = "partial", evidence = ["Dockerfile", ".github/workflows/adapter.yml"] },
+  { id = "F14-R31", state = "partial", evidence = ["plugin.toml", "config/configarr/config.yml", "src/configarr.rs", "src/configarr/guidance.rs"] },
+]
