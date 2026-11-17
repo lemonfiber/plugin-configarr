@@ -32,6 +32,23 @@ CUSTOM_REPO_ROOT                    = "/config/repos"
 TELEMETRY_ENABLED                   = "false"
 CONFIGARR_ENFORCE_CONFIG_VALIDATION = "true"
 
+[[service]]
+id            = "configarr-adapter"
+name          = "Configarr adapter"
+image         = "ghcr.io/lemonfiber/configarr-adapter"
+digest        = "sha256:064da87e301bd665ba2554d8005a75d6fde54715f9866581a11e0aaad388f8fa"
+tag           = "main-9c919a12217a"
+criticality   = "optional"
+reaches       = ""
+asks_for      = "Nothing beyond this machine. It answers lemonfiber's quality.sync contract by writing the preset and curator lemonfiber hands it into the configuration Configarr, beside it, reads on each run, each curator's key into the secrets file beside it."
+config_path   = "/config"
+listens       = 8080
+speaks        = ["quality.sync@1"]
+fronts        = "configarr"
+provides      = ["quality.sync"]
+shares_config = "/configarr"
+posture       = "confined"
+
 [[proof]]
 id      = "configarr.version"
 service = "configarr"

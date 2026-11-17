@@ -28,6 +28,15 @@ says how the catalogue pins this repository and how lemonfiber carries it.
   it speaks no contract, publishes no port and provides nothing. It runs as the
   operator's uid under the confined posture, with `/tmp` in memory, sends no
   usage data, and holds its configuration to its schema strictly.
+- **`configarr-adapter` fronts it**, speaks `quality.sync@1`, provides
+  `quality.sync` and shares Configarr's configuration directory at
+  `/configarr` (`ARCH-R339`).
+- **`conformance/` holds one recording per case of `quality.sync@1`**, written
+  by `lemonfiber plugin record .` at the commit `targets.toml` names, the adapter
+  alone over a copy of Configarr's starting files, since a scheduled service is
+  never started to be recorded (`ARCH-R296`). Re-record whenever the adapter's
+  answers or Configarr's digest change. `tests/conformance.rs` reads every
+  recording with the core's own client.
 - **Its proofs' recordings sit under `recordings/configarr/`**, and its starting
   files under `config/configarr/` (`ARCH-R271`). Each proof is a run with no
   network, so only the lines it keeps are recorded.
