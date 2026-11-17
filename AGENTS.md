@@ -1,4 +1,4 @@
-# AGENTS.md — plugin-template
+# AGENTS.md — plugin-configarr
 
 > **Start at the roadmap and board on [lemonfiber.app](https://lemonfiber.app),
 > rendered from the report of where every unreleased version stands. Then the
@@ -9,69 +9,54 @@
 
 ## What this repo is
 
-The plugin an author copies, and the **canonical home of the CI harness**.
-`plugin-komga`, `plugin-uptime-kuma`, `plugin-plex` and `lemonfiber-plugins` carry
-byte-identical copies of `.github/reader/`, and the ones with a `harness` job fail
-when their copy drifts from this one. Change the harness here, then copy it out;
-changing it there fails.
-
-The plugin itself describes Kavita, and it describes something real on purpose:
-`F10-R7` asks for a template that validates and proves *unmodified*, and a
-template whose proofs are invented teaches an author to invent proofs.
-
-`bundled-part/` is the variant a first-party part of the stack starts from: one
-service, no adapter and no Python, its CI spec's `first-party-plugin` workflow.
-It describes SABnzbd as the stack carries it. `docs/development.md` says what a
-part's repository takes from it.
-
-`built-part/` is the variant for a part whose image lemonfiber builds from its
-upstream's, published and pinned by spec's `first-party-image` workflow. It
-describes Door, built from Caddy with the file capability taken off its binary.
+Configarr as a first-party lemonfiber plugin, offered in Recyclarr's place as
+quality sync: `plugin.toml` and the adapter that speaks the `quality.sync@1`
+contract in front of Configarr, by rewriting the `config.yml` it reads in its
+configuration directory. The adapter is the Rust crate at the root, built on
+`lemonfiber-adapter-kit` from the core at the commit `Cargo.toml` pins, into the
+image the `Dockerfile` builds. `release.yml` publishes that image from every
+commit on `main` and from the train's tag. The
+[bundle contract](https://github.com/lemonfiber/spec/blob/main/20-architecture/contracts/bundle.md)
+says how the catalogue pins this repository and how lemonfiber carries it.
 
 ## The rules you cannot break
 
-- **Nothing here executes.** A plugin is declarative data (`F3-R1`), and
-  contributed code is never run, under any opt-in (`F3-R6`). The Python under
-  `.github/reader/` is CI harness and is not part of what an operator installs:
-  it fetches the lemonfiber release `targets.toml` names, or builds the commit
-  of `main` it names, and asks it.
-- **The plugin is `plugin.toml` and `fixtures/`.** Proofs, claims and
-  contributions live in the manifest, not beside it: an installer reads one file,
-  and something the installer never reads cannot be what `F3-R4` refuses an
-  install over.
-- **The image is named by digest** (`F3-R8`). Moving the pin means re-recording
-  every fixture against the new image in the same change.
-- **A proof asserts a body, never only a status.** Docker's port proxy accepts
-  before anything inside is listening. The one exception is a refusal: a `401`
-  is not something a port proxy can produce.
-- **A proof that could not be run is unproven** (`F3-R5`), never a pass, and
-  no declaration excuses it (`F10-R16`). Failing as declared is its own
-  verdict, written apart from passed and failed and never counted as passed
-  (`F10-R13`).
-- **Sonar's ignores live in the SonarCloud project, never in a file here.**
-  Automatic analysis reads no issue ignore from the repository, so a repository
-  made from this one needs `docker:S8431` ignored on `**/Dockerfile*` in its
-  project's settings: every image is named by tag and digest (ADR-0025).
-- **No field beyond the contract's set.** A manifest carrying one is refused by
-  name rather than ignored (`ARCH-R84`).
-- **The format is lemonfiber's to describe, and nothing here describes it.**
-  `reader.py` carries no list of tables, fields, kinds, closed sets or capability
-  names, and decides no verdict: `F10-R2` forbids a second description of the
-  format, and every verdict CI reports is `lemonfiber plugin claims`'s own.
-
-## Checks
-
-```
-just ci
-```
-
-Every gate CI runs over the contents of this repository, in CI's order. The jobs
-it leaves out are named in the `justfile` beside the recipe, with what covers
-each. `just` lists the recipes it is made of.
-
-`proofs.json` is generated and committed; CI fails when the committed one is not
-what the run would write. `reader.py proofs` writes it on every run.
-
-## Before you open a PR
-
-`just ci` turns this clone's git hooks on as its first step.
+- **The plugin id is the service's id** (`ARCH-R266`). The container, the
+  configuration directory, the settings and the journal keep their names.
+- **`configarr` is a scheduled service** (`ARCH-R431`): it runs to completion at
+  the times the `configarr:schedule` setting names and is never kept running, so
+  it speaks no contract, publishes no port and provides nothing. It runs as the
+  operator's uid under the confined posture, with `/tmp` in memory, sends no
+  usage data, and holds its configuration to its schema strictly.
+- **Its proofs' recordings sit under `recordings/configarr/`**, and its starting
+  files under `config/configarr/` (`ARCH-R271`). Each proof is a run with no
+  network, so only the lines it keeps are recorded.
+- **Every service declares `reaches` and `asks_for`** (`ARCH-R270`).
+- **No Python here.** The reader is spec's `first-party-plugin` workflow's.
+- **No `unwrap`, `expect`, `panic` or indexing** outside tests. The lints in
+  `Cargo.toml` are the core's.
+- **A preset rewrites one curator's section and nothing else**: its `include:`
+  entry naming a TRaSH Guides quality profile by `trash_id`, the `type` of its
+  `quality_definition`, its `base_url`, its `api_key`, which names a `!secret`,
+  and its `enabled`. Every comment, every other section, every entry naming
+  another template and every key nested beneath another stays as it was. A
+  section no curator was pointed at stays disabled, so a run never asks a
+  curator it holds no key for.
+- **A curator's key goes into `secrets.yml`, owner-only** (`0600`), and every
+  file is reached through `lemonfiber_adapter_kit::shared`.
+- **A configuration changed by hand is never written over by `apply`.** The first
+  line of one the adapter writes carries the digest of the rest. One whose digest
+  no longer holds and that is not the shipped file is named in the refusal. A
+  hand edit to `lemonfiber-presets.json` is refused the same way.
+- **Only `reapply` writes over a hand edit, and `edited` shows it first.** Both
+  answer the whole file on disk beside the whole file putting the profiles back
+  writes, named by its path in the configuration directory, each at most 64 KiB;
+  the core masks and compares them, so the adapter builds no diff. What is
+  written starts from the shipped file, with every other curator held to the
+  preset `lemonfiber-presets.json` last kept for it.
+- **The core's crates move with the train.** The `rev` in `Cargo.toml` is the
+  core commit `targets.toml` names, the same for every `lemonfiber-*` crate.
+- **Moving Configarr's digest** means recording every response again against the
+  new image in the same change, moving `RELEASE` in `src/adapter.rs` with it
+  (`build.rs` reads `DIGEST` from `plugin.toml`, the digest's one home), and
+  committing the `proofs.json` the checks write.

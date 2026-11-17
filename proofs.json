@@ -1,34 +1,16 @@
 {
-  "lemonfiber": "0.16.0",
+  "lemonfiber": "9d73abaebc22cf54b512dbc597fb85018f14d4e3",
   "against": "recordings",
   "proofs": [
     {
-      "id": "kavita.serves",
+      "id": "configarr.version",
       "kind": "proof",
       "outcome": "passed",
       "detail": ""
     },
     {
-      "id": "kavita.status-is-not-an-answer",
+      "id": "configarr.reads-its-configuration",
       "kind": "proof",
-      "outcome": "passed",
-      "detail": ""
-    },
-    {
-      "id": "media.serve/guarded",
-      "kind": "probe",
-      "outcome": "passed",
-      "detail": ""
-    },
-    {
-      "id": "media.serve/catalogue",
-      "kind": "probe",
-      "outcome": "passed",
-      "detail": ""
-    },
-    {
-      "id": "kavita:settings-guarded",
-      "kind": "check",
       "outcome": "passed",
       "detail": ""
     }
