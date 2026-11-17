@@ -15,8 +15,9 @@ service: lemonfiber runs it to completion at the times its `configarr:schedule`
 setting names, daily by default, and keeps nothing running between runs. The
 adapter that speaks lemonfiber's `quality.sync@1` contract in front of it is
 built from this repository, and its image is published from every commit on
-`main` and from the release train's tag. The catalogue's pin moves by a
-reviewed pull request.
+`main` and from the release train's tag. The manifest runs that adapter
+beside Configarr, sharing Configarr's configuration directory. The catalogue's
+pin moves by a reviewed pull request.
 
 ## What is here
 
@@ -27,6 +28,7 @@ reviewed pull request.
 | `Dockerfile` | The adapter's image |
 | `config/configarr/` | The files Configarr starts with, written into its configuration directory |
 | `recordings/configarr/` | What its proofs' runs wrote, which each proof is judged against |
+| `conformance/` | One recording per case of `quality.sync@1`, answered by the adapter over Configarr's starting files |
 | `targets.toml` | The lemonfiber its checks run against |
 | `proofs.json` | What those checks said, committed |
 
@@ -35,12 +37,11 @@ reviewed pull request.
 The plugin verdict is one job of spec's
 [`first-party-plugin`](https://github.com/lemonfiber/spec/blob/main/.github/workflows/first-party-plugin.yml)
 workflow: the manifest as the lemonfiber `targets.toml` names reads it, every
-proof against its recording, and every pinned digest. The `recordings` job
-takes every recording again with the adapter built from this tree. `rust.yml`
-holds the
-adapter to its format, lints, tests, every line covered and its dependency
-policy. This repository holds no Python of its own. `just ci` runs the gates
-that need nothing but this tree.
+proof against its recording, every conformance recording, and every pinned
+digest. The `recordings` job takes every recording again with the adapter built
+from this tree. `rust.yml` holds the adapter to its format, lints, tests, every
+line covered and its dependency policy. This repository holds no Python of its
+own. `just ci` runs the gates that need nothing but this tree.
 
 ## Licence
 
