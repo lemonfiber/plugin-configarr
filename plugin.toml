@@ -14,8 +14,8 @@ forms       = ["auto", "full"]
 id          = "configarr"
 name        = "Configarr"
 image       = "ghcr.io/raydak-labs/configarr"
-digest      = "sha256:48893921c607e96e40310d3ced50a92584667a84595dc9b782f523d46267f2e7"
-tag         = "1.39.2"
+digest      = "sha256:f8f9f67ef4efda44c661d2d51defab9048087628ed3aa9eed4c9dcdb35c36ad3"
+tag         = "1.40.0"
 criticality = "enhancing"
 memory_mib  = 200
 reaches     = "the community quality-guide repositories"
@@ -54,7 +54,7 @@ id      = "configarr.version"
 service = "configarr"
 title   = "Configarr's own program says which release it is"
 run     = { args = ["sh", "-c", "CONFIG_LOCATION=/nonexistent node index.js 2>&1 | grep -o 'Configarr Version: v[0-9.]*'"] }
-expect  = { exit = 0, stdout_starts_with = "Configarr Version: v1.39.2\n" }
+expect  = { exit = 0, stdout_starts_with = "Configarr Version: v1.40.0\n" }
 fixture = "recordings/configarr/version.json"
 why     = """
 Configarr answers nothing over a port: it runs at the times its schedule
@@ -70,7 +70,7 @@ id      = "configarr.reads-its-configuration"
 service = "configarr"
 title   = "Configarr reads the configuration it starts with and holds it valid"
 run     = { args = ["sh", "-c", "node index.js 2>&1 | grep -o -e 'Configarr Version: v[0-9.]*' -e 'Checking Recyclarr repo'"] }
-expect  = { exit = 0, stdout_starts_with = "Configarr Version: v1.39.2\nChecking Recyclarr repo\n" }
+expect  = { exit = 0, stdout_starts_with = "Configarr Version: v1.40.0\nChecking Recyclarr repo\n" }
 fixture = "recordings/configarr/reads-its-configuration.json"
 why     = """
 Run in the container lemonfiber makes for the service, with its configuration
